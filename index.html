@@ -2,9 +2,9 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UT Anonymous | System Protocol</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>UT Anonymous | Mobile Protocol</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
     <style>
         :root {
             --red: #ff0000;
@@ -16,6 +16,7 @@
             margin: 0; padding: 0; background: #000;
             color: var(--white); font-family: 'Montserrat', sans-serif;
             overflow: hidden; height: 100vh; width: 100vw;
+            touch-action: none;
         }
 
         #blitz-overlay {
@@ -23,56 +24,57 @@
             background: #fff; z-index: 10000; opacity: 0; pointer-events: none;
         }
 
+        /* Tombol Start Mobile */
         #start-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 9999; display: flex;
             align-items: center; justify-content: center; cursor: pointer;
         }
         #start-screen h2 { 
-            border: 1px solid var(--white); padding: 12px 25px; 
-            letter-spacing: 3px; font-weight: 400; font-size: 1rem; 
-            transition: 0.5s; text-transform: uppercase;
+            border: 1px solid rgba(255,255,255,0.4); padding: 10px 20px; 
+            letter-spacing: 2px; font-weight: 400; font-size: 0.8rem; 
+            text-transform: uppercase;
         }
 
-        canvas { position: fixed; top: 0; left: 0; z-index: 1; opacity: 0.3; }
+        canvas { position: fixed; top: 0; left: 0; z-index: 1; opacity: 0.25; }
 
-        /* LOADING - Ukuran Bar & Font diperkecil */
+        /* LOADING - Optimized for Portrait */
         #loading-screen {
             position: relative; z-index: 100;
             display: none; flex-direction: column; align-items: center;
             justify-content: center; height: 100vh;
         }
-        .progress-box { width: 250px; height: 2px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
-        #fill { width: 0%; height: 100%; background: var(--red); box-shadow: 0 0 10px var(--red); }
+        .progress-box { width: 180px; height: 2px; background: rgba(255,255,255,0.1); }
+        #fill { width: 0%; height: 100%; background: var(--red); }
         #status { 
-            margin-top: 15px; font-size: 0.9rem; font-weight: 700; /* Font Initializing Diperkecil */
-            letter-spacing: 4px; color: var(--red); text-transform: uppercase; 
-            text-align: center; font-family: 'JetBrains Mono', monospace;
+            margin-top: 12px; font-size: 0.6rem; /* Ukuran Mikro */
+            font-weight: 400; letter-spacing: 2px; color: var(--red); 
+            text-transform: uppercase; font-family: 'JetBrains Mono', monospace;
         }
 
-        /* NARASI - Ukuran Medium Seimbang */
+        /* NARASI - Mobile Balanced */
         #message-screen {
             position: relative; z-index: 100;
             display: none; flex-direction: column; align-items: center;
-            justify-content: center; height: 100vh; text-align: center; padding: 0 12%;
+            justify-content: center; height: 100vh; text-align: center; padding: 0 30px;
         }
-        .giant-text { font-size: 2.2rem; font-weight: 900; margin-bottom: 20px; line-height: 1.2; color: var(--white); } 
-        .sub-text { font-family: 'JetBrains Mono', monospace; color: var(--green); font-size: 0.95rem; margin: 6px 0; opacity: 0.9; }
+        .giant-text { font-size: 1.2rem; font-weight: 900; margin-bottom: 15px; line-height: 1.4; letter-spacing: 0.5px; } 
+        .sub-text { font-family: 'JetBrains Mono', monospace; color: var(--green); font-size: 0.65rem; margin: 5px 0; opacity: 0.8; line-height: 1.5; }
 
-        /* OUTRO - Font Diperkecil */
+        /* OUTRO - Fit in Mobile Width */
         #outro-screen {
             position: relative; z-index: 100;
             display: none; flex-direction: column; align-items: center;
             justify-content: center; height: 100vh;
         }
-        #outro-text { font-size: 2.5rem; font-weight: 900; color: var(--red); letter-spacing: 2px; } /* Font Outro Diperkecil */
-        .char { opacity: 0; transition: opacity 1.2s ease-in-out; display: inline-block; }
+        #outro-text { font-size: 1.5rem; font-weight: 900; color: var(--red); letter-spacing: 2px; }
+        .char { opacity: 0; transition: opacity 1s ease-in-out; display: inline-block; }
         .fade-in { opacity: 1; }
 
-        .blitz-active { animation: blitz-anim 1.6s ease-out forwards; }
+        .blitz-active { animation: blitz-anim 1.5s ease-out forwards; }
         @keyframes blitz-anim {
             0% { opacity: 0; }
-            12% { opacity: 1; }
+            15% { opacity: 1; }
             100% { opacity: 0; }
         }
     </style>
@@ -88,13 +90,9 @@
     <div id="status">INITIALIZING... 0%</div>
 </div>
 
-<div id="message-screen">
-    <div id="final-content"></div>
-</div>
+<div id="message-screen"><div id="final-content"></div></div>
 
-<div id="outro-screen">
-    <h1 id="outro-text"></h1>
-</div>
+<div id="outro-screen"><h1 id="outro-text"></h1></div>
 
 <audio id="ambient" loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3"></audio>
 <audio id="beep" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
@@ -110,9 +108,10 @@
     const canvas = document.getElementById('matrix');
     const ctx = canvas.getContext('2d');
 
+    // Matrix Rain for Mobile
     canvas.width = window.innerWidth; canvas.height = window.innerHeight;
     const alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const fontSize = 14;
+    const fontSize = 10;
     const columns = canvas.width / fontSize;
     const drops = Array.from({ length: columns }).fill(1);
     
@@ -143,14 +142,14 @@
         let id = setInterval(() => {
             if (width >= 100) {
                 clearInterval(id);
-                setTimeout(showMessages, 1000);
+                setTimeout(showMessages, 800);
             } else {
-                width += 0.15;
+                width += 0.18;
                 if (width > 100) width = 100;
                 document.getElementById('fill').style.width = width + '%';
                 document.getElementById('status').innerText = `INITIALIZING... ${Math.floor(width)}%`;
             }
-        }, 65);
+        }, 60);
     }
 
     async function showMessages() {
@@ -174,9 +173,9 @@
             for (let char of line.t) {
                 div.innerHTML += char;
                 beep.currentTime = 0; beep.play().catch(()=>{});
-                await new Promise(r => setTimeout(r, 45));
+                await new Promise(r => setTimeout(r, 35));
             }
-            await new Promise(r => setTimeout(r, 1400));
+            await new Promise(r => setTimeout(r, 1300));
         }
         setTimeout(showOutro, 1000);
     }
@@ -198,7 +197,7 @@
         for (let span of spans) {
             span.classList.add('fade-in');
             beep.currentTime = 0; beep.play().catch(()=>{});
-            await new Promise(r => setTimeout(r, 200));
+            await new Promise(r => setTimeout(r, 180));
         }
 
         setTimeout(() => {
@@ -212,10 +211,6 @@
             }, 300);
         }, 2000);
     }
-
-    window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-    });
 </script>
 </body>
 </html>
