@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DARK SYSTEM</title>
+
+<style>
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  background:black;
+  overflow:hidden;
+  color:#00ff00;
+}
+
+/* GLOBAL */
+*{
+  font-family:monospace;
+  text-shadow:0 0 12px #00ff00;
+}
+
+/* BACKGROUND ANIMATION */
+#bg{
+  position:fixed;
+  inset:0;
+  background:
+    linear-gradient(120deg,#001a00,#000),
+    repeating-linear-gradient(
+      to bottom,
+      rgba(0,255,0,.05),
+      rgba(0,255,0,.05) 1px,
+      transparent 2px,
+      transparent 4px
+    );
+  animation:bg 5s infinite alternate;
+}
+
+@keyframes bg{
+  from{filter:brightness(.8);}
+  to{filter:brightness(1.2);}
+}
+
+/* START */
+#start{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:48px;
+  cursor:pointer;
+  animation:flicker .2s infinite;
+}
+
+/* SCENE */
+#scene{
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-size:36px;
+  opacity:0;
+  transition:opacity 1s;
+}
+
+/* LOADING */
+#loading{
+  position:fixed;
+  inset:0;
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:20px;
+}
+
+#bar{
+  width:60%;
+  height:15px;
+  border:2px solid #00ff00;
+}
+
+#fill{
+  width:0%;
+  height:100%;
+  background:#00ff00;
+}
+
+/* MATRIX */
+canvas{
+  position:absolute;
+  inset:0;
+}
+
+/* MARQUEE */
+#marquee{
+  position:fixed;
+  top:50%;
+  transform:translateY(-50%);
+  width:100%;
+  text-align:center;
+  font-size:60px;
+  display:none;
+  animation:run 7s linear infinite, flicker .15s infinite;
+}
+
+@keyframes run{
+  from{transform:translate(100%,-50%);}
+  to{transform:translate(-100%,-50%);}
+}
+
+@keyframes flicker{
+  0%{opacity:1;}
+  50%{opacity:.6;}
+  100%{opacity:1;}
+}
+</style>
+</head>
+
+<body>
+
+<div id="bg"></div>
+
+<div id="start">CLICK TO START</div>
+<div id="scene"></div>
+
+<div id="loading">
+  <div id="loadingText">LOADING 0%</div>
+  <div id="bar"><div id="fill"></div></div>
+</div>
+
+<canvas id="matrix"></canvas>
+
+<div id="marquee">
+DESTIA ITU ADALAH ANOMALI TUNG TUNG SAHUR
+</div>
+
+<script>
+let audioCtx;
+
+/* AUDIO */
+function startSound(){
+  audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+}
+
+/* SCENES */
+const scenes=[
+"CONNECTING...",
+"ACCESSING SYSTEM...",
+"DECRYPTING DATA...",
+"SYSTEM HACKED",
+"WELCOME TO THE UT ANONYMOUS",
+];
+
+let idx=0;
+const scene=document.getElementById("scene");
+
+function playScenes(){
+  if(idx>=scenes.length){
+    setTimeout(startLoading,500);
+    return;
+  }
+  scene.textContent=scenes[idx];
+  scene.style.opacity=1;
+
+  setTimeout(()=>{
+    scene.style.opacity=0;
+    idx++;
+    setTimeout(playScenes,800);
+  },1200);
+}
+
+/* LOADING */
+function startLoading(){
+  scene.style.display="none";
+  const loading=document.getElementById("loading");
+  loading.style.display="flex";
+  let p=0;
+  const fill=document.getElementById("fill");
+  const txt=document.getElementById("loadingText");
+
+  const int=setInterval(()=>{
+    p++;
+    fill.style.width=p+"%";
+    txt.textContent="LOADING "+p+"%";
+    if(p>=100){
+      clearInterval(int);
+      loading.style.display="none";
+      document.getElementById("marquee").style.display="block";
+      startMatrix();
+    }
+  },40);
+}
+
+/* MATRIX */
+function startMatrix(){
+  const c=document.getElementById("matrix");
+  const ctx=c.getContext("2d");
+  c.width=innerWidth;
+  c.height=innerHeight;
+
+  const chars="01X#$@";
+  const size=16;
+  const cols=c.width/size;
+  const drops=Array(Math.floor(cols)).fill(1);
+
+  setInterval(()=>{
+    ctx.fillStyle="rgba(0,0,0,.08)";
+    ctx.fillRect(0,0,c.width,c.height);
+    ctx.fillStyle="#00ff00";
+    ctx.font=size+"px monospace";
+
+    drops.forEach((y,i)=>{
+      const t=chars[Math.floor(Math.random()*chars.length)];
+      ctx.fillText(t,i*size,y*size);
+      drops[i]=y*size>c.height && Math.random()>.97?0:y+1;
+    });
+  },33);
+}
+
+/* START */
+document.getElementById("start").onclick=()=>{
+  document.getElementById("start").style.display="none";
+  startSound();
+  playScenes();
+};
+</script>
+
+</body>
+</html>
